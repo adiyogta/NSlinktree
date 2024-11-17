@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -31,7 +31,7 @@ interface Product {
     <!-- Header Profile -->
     <div class="bg-gradient-to-r from-[#CDD5AE] to-[#9C9D7D] drop-shadow-lg rounded-b-xl py-6 px-4 mb-4">
       <div class="flex justify-center gap-12 items-center">
-        <div class="w-24 h-24 rounded-full overflow-hidden drop-shadow-md">
+        <div class="w-24 h-24 rounded-full overflow-hidden drop-shadow-sm">
           <img src="https://res.cloudinary.com/dvqq3izfb/image/upload/v1731858818/ns_lepedk.png" alt="Profile Picture" class="w-full h-full object-cover">
         </div>
         <div class="flex flex-col gap-2 items-center">
@@ -172,7 +172,7 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   isListView = true;
   isScrolled = false;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private cdr: ChangeDetectorRef) {}
   onScroll(event: Event): void {
     
     this.isScrolled = true; // Adjust threshold as needed
@@ -182,16 +182,18 @@ export class ProductListComponent implements OnInit {
   
     this.http.get<Product[]>(apiUrl).subscribe({
       next: (data) => {
-        if(data.length != 0) {
-          console.log('Products fetched:', data);
+        if (data.length !== 0) {
           this.products = data;
+          this.cdr.detectChanges(); // Memastikan Angular mendeteksi perubahan
         } else {
           this.products = this.getFallbackProducts();
+          this.cdr.detectChanges();
         }
       },
       error: (error) => {
         console.error('Error fetching products:', error);
         this.products = this.getFallbackProducts();
+        this.cdr.detectChanges();
       }
     });
   }
