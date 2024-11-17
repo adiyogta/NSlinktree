@@ -105,7 +105,7 @@ interface Product {
                 <img [src]="product.urlGambar" [alt]="product.namaBarang"
                   class="w-full h-full object-cover rounded-lg"
                   loading="lazy"
-                  onerror="this.src='https://via.placeholder.com/96'">
+                  onerror="this.src='https://placehold.co/400'">
               </div>
             </div>
           }
@@ -125,7 +125,7 @@ interface Product {
           <img [src]="product.urlGambar" [alt]="product.namaBarang"
             class="w-full h-full object-cover rounded-lg"
             loading="lazy"
-            onerror="this.src='https://via.placeholder.com/96'">
+            onerror="this.src='https://placehold.co/400'">
         </div>
         <div class="bg-[#fffaea] rounded-lg p-2 mb-2 drop-shadow-md flex-grow">
           <h2 class="text-sm text-wrap line-clamp-2">{{ product.namaBarang }}</h2>
@@ -209,7 +209,7 @@ export class ProductListComponent implements OnInit {
       {
         nomor: '1',
         namaBarang: 'Produk 1',
-        urlGambar: 'https://via.placeholder.com/96',
+        urlGambar: 'https://placehold.co/400',
         urlBeliTikTok: '',
         urlBeliShopee: '',
         urlBeliTokopedia: ''
@@ -217,7 +217,7 @@ export class ProductListComponent implements OnInit {
       {
         nomor: '2',
         namaBarang: 'Produk 2',
-        urlGambar: 'https://via.placeholder.com/96',
+        urlGambar: 'https://placehold.co/400',
         urlBeliTikTok: '',
         urlBeliShopee: '',
         urlBeliTokopedia: ''
@@ -225,7 +225,7 @@ export class ProductListComponent implements OnInit {
       {
         nomor: '3',
         namaBarang: 'Produk 3',
-        urlGambar: 'https://via.placeholder.com/96',
+        urlGambar: 'https://placehold.co/400',
         urlBeliTikTok: '',
         urlBeliShopee: '',
         urlBeliTokopedia: ''
@@ -233,7 +233,7 @@ export class ProductListComponent implements OnInit {
       {
         nomor: '4',
         namaBarang: 'Produk 4',
-        urlGambar: 'https://via.placeholder.com/96',
+        urlGambar: 'https://placehold.co/400',
         urlBeliTikTok: '',
         urlBeliShopee: '',
         urlBeliTokopedia: ''
@@ -241,7 +241,7 @@ export class ProductListComponent implements OnInit {
       {
         nomor: '5',
         namaBarang: 'Produk 5',
-        urlGambar: 'https://via.placeholder.com/96',
+        urlGambar: 'https://placehold.co/400',
         urlBeliTikTok: '',
         urlBeliShopee: '',
         urlBeliTokopedia: ''
