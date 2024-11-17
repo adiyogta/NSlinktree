@@ -1,8 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChangeDetectorRef, Component, Inject, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { animate, style, transition, trigger } from '@angular/animations';
-
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { timeout } from 'rxjs/internal/operators/timeout';
+import { retry } from 'rxjs/internal/operators/retry';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { of } from 'rxjs/internal/observable/of';
+export const environment = {
+  production: false,
+  apiUrl: 'https://script.googleusercontent.com/macros/echo?user_content_key=3cR_4PzWyCqEV4qx6hKNWXeImmihjYXBWBjS2GE-QcM97NcOuc8t9nMYXeO0UEFSSatOf2HktbpwNd9OcB7VM9U54H0qTWBrm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnJktRd9gU8Afv6P8N-wKfGIccLDcmlOvBWDsq2VE5Ycgb7KT5oOZSbPrx2KNmcJsTAP4TkwPPibTtfKkq_Y6tW-xXeqnIF-jqtz9Jw9Md8uu&lib=MVXYB5346CT_WvuckoVNZlRgaKOwQqP8j'
+};
 interface Product {
     nomor: string;
     namaBarang: string;
@@ -27,7 +35,7 @@ interface Product {
   template: `
    <div class="max-w-md mx-auto bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC] min-h-screen pb-4 px-4 flex flex-col">
       <!-- Header Profile -->
-      <div class="sticky top-0 z-10 bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC]" (scroll)="onScroll($event)">
+      <div class="sticky top-0 z-10 bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC]" >
     <!-- Header Profile -->
     <div class="bg-gradient-to-r from-[#CDD5AE] to-[#9C9D7D] drop-shadow-lg rounded-b-xl py-6 px-4 mb-4">
       <div class="flex justify-center gap-12 items-center">
@@ -69,6 +77,27 @@ interface Product {
     </div>
   </div>
 
+  @if (isLoading) {
+    <div class="flex justify-center items-center p-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-[#9C9D7D] border-t-transparent"></div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 m-4">
+      <p class="text-red-700 text-center">{{ error }}</p>
+      <button 
+        (click)="retryFetch()" 
+        class="mt-2 w-full bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200"
+      >
+        Coba Lagi
+      </button>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading) {
   <div class="overflow-y-auto flex-grow">
       <!-- Product List View -->
       @if (isListView) {
@@ -152,6 +181,8 @@ interface Product {
   </div>
 }
 </div>
+}
+
     </div>
   `,
   styles:`
@@ -169,39 +200,81 @@ interface Product {
 `
 })
 export class ProductListComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
+  
   products: Product[] = [];
   isListView = true;
-  isScrolled = false;
-  constructor(private http: HttpClient,private cdr: ChangeDetectorRef) {}
-  onScroll(event: Event): void {
-    
-    this.isScrolled = true; // Adjust threshold as needed
-  }
+  isLoading = true;
+  error: string | null = null;
+  retryCount = 0;
+  maxRetries = 3;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngOnInit(): void {
-    const apiUrl = 'https://script.googleusercontent.com/macros/echo?user_content_key=UzCbX8fc9JcPWbsTETz1lxgmef--CVehbSZhwNc3KQ5l9-aG8lvoQ3Sn3ZJHLhwKuTpngOfZW8g8wPbyQHVhKBfrBpJrt7a-m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnJktRd9gU8Afv6P8N-wKfGIccLDcmlOvBWDsq2VE5Ycgb7KT5oOZSbPrx2KNmcJsTAP4TkwPPibTtfKkq_Y6tW-xXeqnIF-jqtz9Jw9Md8uu&lib=MVXYB5346CT_WvuckoVNZlRgaKOwQqP8j';
-  
-    this.http.get<Product[]>(apiUrl).subscribe({
-      next: (data) => {
-        if (data.length !== 0) {
-          this.products = data;
-          this.cdr.detectChanges(); // Memastikan Angular mendeteksi perubahan
-        } else {
-          this.products = this.getFallbackProducts();
+    // Inisialisasi dengan data fallback terlebih dahulu
+    this.products = this.getFallbackProducts();
+    
+    // Hanya fetch data jika di browser
+    if (isPlatformBrowser(this.platformId)) {
+      this.fetchProducts();
+    }
+  }
+
+  private fetchProducts(): void {
+    this.isLoading = true;
+    this.error = null;
+
+    this.http.get<Product[]>(environment.apiUrl)
+      .pipe(
+        timeout(5000), // timeout setelah 5 detik
+        retry(this.maxRetries), // coba ulang maksimal 3 kali
+        catchError(this.handleError.bind(this))
+      )
+      .subscribe({
+        next: (data) => {
+          if (data && Array.isArray(data) && data.length > 0) {
+            this.products = data;
+          }
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Final error after retries:', error);
+          this.error = 'Gagal memuat data produk. Menggunakan data cadangan.';
+          this.isLoading = false;
           this.cdr.detectChanges();
         }
-      },
-      error: (error) => {
-        console.error('Error fetching products:', error);
-        this.products = this.getFallbackProducts();
-        this.cdr.detectChanges();
-      }
-    });
+      });
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Terjadi kesalahan saat memuat data.';
+    
+    if (error.status === 404) {
+      errorMessage = 'Data tidak ditemukan.';
+    } else if (error.status === 0) {
+      errorMessage = 'Tidak dapat terhubung ke server.';
+    }
+
+    this.error = errorMessage;
+    return of(this.getFallbackProducts()); // Return fallback data
+  }
+
+  // Tambahkan fungsi untuk retry manual
+  retryFetch(): void {
+    if (this.retryCount < this.maxRetries) {
+      this.retryCount++;
+      this.fetchProducts();
+    }
   }
 
   toggleView(): void {
     this.isListView = !this.isListView;
+    this.cdr.detectChanges();
   }
-  
+
   trackByNomor(index: number, product: Product): string {
     return product.nomor;
   }
