@@ -103,34 +103,34 @@ interface Product {
       @if (isListView) {
         <div class="space-y-4" >
           @for (product of products; track product.nomor) {
-            <div class="flex items-center gap-2 bg-[#FBF4D7] rounded-lg p-2 drop-shadow-lg">
-              <div class="w-12 h-12 flex items-center justify-center bg-[#9C9D7D] rounded-lg text-white font-bold drop-shadow-md">
+            <div class="flex items-center gap-2 bg-[#FBF4D7] rounded-xl py-2 drop-shadow-lg">
+              <div class="w-9 h-11 flex items-center justify-center bg-[#9C9D7D] rounded-r-lg text-sm text-white font-bold drop-shadow-md">
                 {{ product.nomor }}
               </div>
               <div class="flex-1 flex-col">
-                <div class="bg-[#fffaea] rounded-lg p-1 drop-shadow-md">
+                <div class="bg-[#fffaea] rounded-lg p-2 drop-shadow-md">
                   <h2 class="justify-self-start text-wrap">{{ product.namaBarang }}</h2>
                 </div>
                 <div class="p-1"></div>
                 <div class="grid grid-cols-3 gap-1">
                   <a [href]="product.urlBeliTikTok" target="_blank" 
-                    class="bg-black text-white py-2 px-1 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+                    class="bg-black text-white py-2 px-1 rounded-lg text-sm font-normal text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
                    
                     TikTok
                   </a>
                   <a [href]="product.urlBeliShopee" target="_blank" 
-                    class="bg-[#EE4D2D] text-white py-2 px-1 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity">
+                    class="bg-[#EE4D2D] text-white py-2 px-1 rounded-lg text-sm font-normal text-center hover:opacity-90 transition-opacity">
                     Shopee
                   </a>
                   <a [href]="product.urlBeliTokopedia" target="_blank" 
-                    class="bg-[#03AC0E] text-white py-2 px-1 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity">
+                    class="bg-[#03AC0E] text-white py-2 px-1 rounded-lg text-xs font-normal text-center hover:opacity-90 transition-opacity">
                     Tokopedia
                   </a>
                 </div>
               </div>
-              <div class="w-24 h-28 bg-gray-200 rounded-lg drop-shadow-md">
+              <div class="w-20 h-28 bg-gray-200 rounded-l-lg drop-shadow-md">
                 <img [src]="product.urlGambar" [alt]="product.namaBarang"
-                  class="w-full h-full object-cover rounded-lg"
+                  class="w-full h-full object-cover rounded-l-lg"
                   loading="lazy"
                   onerror="this.src='https://placehold.co/400'">
               </div>
