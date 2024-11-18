@@ -108,20 +108,18 @@ interface Product {
                 {{ product.nomor }}
               </div>
               <div class="flex-1 flex-col">
-                <div class="bg-[#fffaea] rounded-lg p-3 drop-shadow-md">
+                <div class="bg-[#fffaea] rounded-lg p-1 drop-shadow-md">
                   <h2 class="justify-self-start text-wrap">{{ product.namaBarang }}</h2>
                 </div>
                 <div class="p-1"></div>
                 <div class="grid grid-cols-3 gap-1">
                   <a [href]="product.urlBeliTikTok" target="_blank" 
-                    class="bg-black text-white py-2 px-3 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                    </svg>
+                    class="bg-black text-white py-2 px-1 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+                   
                     TikTok
                   </a>
                   <a [href]="product.urlBeliShopee" target="_blank" 
-                    class="bg-[#EE4D2D] text-white py-2 px-3 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity">
+                    class="bg-[#EE4D2D] text-white py-2 px-1 rounded-lg text-sm font-medium text-center hover:opacity-90 transition-opacity">
                     Shopee
                   </a>
                   <a [href]="product.urlBeliTokopedia" target="_blank" 
@@ -162,9 +160,7 @@ interface Product {
         <div class="grid grid-cols-1 gap-2">
           <a [href]="product.urlBeliTikTok" target="_blank" 
             class="bg-black text-white py-2 px-3 rounded-lg text-xs font-medium text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-            </svg>
+            
             TikTok
           </a>
           <a [href]="product.urlBeliShopee" target="_blank" 
