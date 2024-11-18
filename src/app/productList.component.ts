@@ -7,6 +7,7 @@ import { timeout } from 'rxjs/internal/operators/timeout';
 import { retry } from 'rxjs/internal/operators/retry';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { of } from 'rxjs/internal/observable/of';
+import { ProductModalComponent } from "./productDetail.component";
 export const environment = {
   production: false,
   apiUrl: 'https://script.googleusercontent.com/macros/echo?user_content_key=3cR_4PzWyCqEV4qx6hKNWXeImmihjYXBWBjS2GE-QcM97NcOuc8t9nMYXeO0UEFSSatOf2HktbpwNd9OcB7VM9U54H0qTWBrm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnJktRd9gU8Afv6P8N-wKfGIccLDcmlOvBWDsq2VE5Ycgb7KT5oOZSbPrx2KNmcJsTAP4TkwPPibTtfKkq_Y6tW-xXeqnIF-jqtz9Jw9Md8uu&lib=MVXYB5346CT_WvuckoVNZlRgaKOwQqP8j'
@@ -23,7 +24,7 @@ interface Product {
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, ProductModalComponent],
   animations: [
     trigger('viewChange', [
       transition('* => *', [
@@ -33,9 +34,9 @@ interface Product {
     ])
   ],
   template: `
-   <div class="max-w-md mx-auto bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC] min-h-screen pb-4 px-4 flex flex-col">
+   <div class="max-w-md mx-auto bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC] min-h-screen flex flex-col">
       <!-- Header Profile -->
-      <div class="sticky top-0 z-10 bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC]" >
+      <div class="sticky top-0 z-10 bg-gradient-to-r from-[#F3F8F2] to-[#FFF7EC] px-4" >
     <!-- Header Profile -->
     <div class="bg-gradient-to-r from-[#CDD5AE] to-[#9C9D7D] drop-shadow-lg rounded-b-xl py-6 px-4 mb-4">
       <div class="flex justify-center gap-12 items-center">
@@ -98,39 +99,39 @@ interface Product {
 
   <!-- Content -->
   @if (!isLoading) {
-  <div class="overflow-y-auto flex-grow">
+  <div class="overflow-y-auto flex-grow px-3 pb-2">
       <!-- Product List View -->
       @if (isListView) {
         <div class="space-y-4" >
           @for (product of products; track product.nomor) {
-            <div class="flex items-center gap-2 bg-[#FBF4D7] rounded-xl py-2 drop-shadow-lg">
-              <div class="w-9 h-11 flex items-center justify-center bg-[#9C9D7D] rounded-r-lg text-sm text-white font-bold drop-shadow-md">
+            <div class="flex items-center gap-2 bg-[#FBF4D7] rounded-xl py-2 pr-2 drop-shadow-lg">
+              <div class="w-9 h-11 flex items-center justify-center bg-[#9C9D7D] rounded-r-3xl text-sm text-white font-bold drop-shadow-md">
                 {{ product.nomor }}
               </div>
               <div class="flex-1 flex-col">
-                <div class="bg-[#fffaea] rounded-lg p-2 drop-shadow-md">
+                <div class="bg-[#fffaea] rounded-lg p-2 drop-shadow-md cursor-pointer" (click)="openProductDetail(product)">
                   <h2 class="justify-self-start text-wrap">{{ product.namaBarang }}</h2>
                 </div>
                 <div class="p-1"></div>
                 <div class="grid grid-cols-3 gap-1">
                   <a [href]="product.urlBeliTikTok" target="_blank" 
-                    class="bg-black text-white py-2 px-1 rounded-lg text-sm font-normal text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+                    class="bg-black text-white py-2 px-1 rounded-xl text-sm font-normal text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
                    
                     TikTok
                   </a>
                   <a [href]="product.urlBeliShopee" target="_blank" 
-                    class="bg-[#EE4D2D] text-white py-2 px-1 rounded-lg text-sm font-normal text-center hover:opacity-90 transition-opacity">
+                    class="bg-[#EE4D2D] text-white py-2 px-1 rounded-xl text-sm font-normal text-center hover:opacity-90 transition-opacity">
                     Shopee
                   </a>
                   <a [href]="product.urlBeliTokopedia" target="_blank" 
-                    class="bg-[#03AC0E] text-white py-2 px-1 rounded-lg text-xs font-normal text-center hover:opacity-90 transition-opacity">
+                    class="bg-[#03AC0E] text-white py-2 px-1 rounded-xl text-xs font-normal text-center hover:opacity-90 transition-opacity">
                     Tokopedia
                   </a>
                 </div>
               </div>
-              <div class="w-20 h-28 bg-gray-200 rounded-l-lg drop-shadow-md">
-                <img [src]="product.urlGambar" [alt]="product.namaBarang"
-                  class="w-full h-full object-cover rounded-l-lg"
+              <div class="w-20 h-28 bg-gray-200 rounded-xl drop-shadow-md cursor-pointer" (click)="openProductDetail(product)">
+                <img [src]="product.urlGambar + 'q=50&fm=webp'" [alt]="product.namaBarang"
+                  class="w-full h-full object-cover rounded-lg"
                   loading="lazy"
                   onerror="this.src='https://placehold.co/400'">
               </div>
@@ -146,15 +147,15 @@ interface Product {
     @for (product of products; track product.nomor) {
       <div class="bg-[#FBF4D7] rounded-lg p-2 drop-shadow-lg flex flex-col">
         <div class="relative w-full h-40 mb-2">
-          <div class="absolute top-2 left-2 w-8 h-8 flex items-center justify-center bg-[#9C9D7D] rounded-lg text-white font-bold drop-shadow-md z-10">
+          <div class="absolute top-1 left-1 w-8 h-8 flex items-center justify-center bg-[#9C9D7D] rounded-lg text-white font-bold drop-shadow-md z-10">
             {{ product.nomor }}
           </div>
-          <img [src]="product.urlGambar" [alt]="product.namaBarang"
-            class="w-full h-full object-cover rounded-lg"
+          <img [src]="product.urlGambar + 'q=50&fm=webp'" [alt]="product.namaBarang"
+            class="w-full h-full object-cover rounded-lg cursor-pointer" (click)="openProductDetail(product)"
             loading="lazy"
             onerror="this.src='https://placehold.co/400'">
         </div>
-        <div class="bg-[#fffaea] rounded-lg p-2 mb-2 drop-shadow-md flex-grow">
+        <div class="bg-[#fffaea] rounded-lg p-2 mb-2 drop-shadow-md flex-grow cursor-pointer" (click)="openProductDetail(product)">
           <h2 class="text-sm text-wrap line-clamp-2">{{ product.namaBarang }}</h2>
         </div>
         <div class="grid grid-cols-1 gap-2">
@@ -178,7 +179,11 @@ interface Product {
 }
 </div>
 }
-
+<app-product-modal 
+  [isOpen]="isModalOpen"
+  [product]="selectedProduct"
+  (close)="closeModal()"
+/>
     </div>
   `,
   styles:`
@@ -274,6 +279,21 @@ export class ProductListComponent implements OnInit {
   trackByNomor(index: number, product: Product): string {
     return product.nomor;
   }
+
+  selectedProduct: Product | null = null;
+isModalOpen = false;
+
+// Tambahkan method ini di dalam class ProductListComponent:
+openProductDetail(product: Product): void {
+  this.selectedProduct = product;
+  this.isModalOpen = true;
+}
+
+closeModal(): void {
+  this.isModalOpen = false;
+  this.selectedProduct = null;
+}
+
 
   private getFallbackProducts(): Product[] {
     return [
